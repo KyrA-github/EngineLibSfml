@@ -58,9 +58,9 @@ void Engine::addObj(const sf::Vector3f& baseCenter, float baseSize, float height
         triangle[2].position = projectTo2D(topVertex);
 
         // Задаем цвета
-        triangle[0].color = sf::Color::Red;   // Цвет первой вершины
-        triangle[1].color = sf::Color::Green; // Цвет второй вершины
-        triangle[2].color = sf::Color::Blue;  // Цвет третьей вершины
+        triangle[0].color = sf::Color(128,128,128);   // Цвет первой вершины
+        triangle[1].color = sf::Color(128,128,128); // Цвет второй вершины
+        triangle[2].color = sf::Color(128,128,128);  // Цвет третьей вершины
 
         polygon.sfVerAry = triangle;
         polygon.posVec3[0] = bottomVertices[i];
@@ -76,7 +76,7 @@ void Engine::addObj(const sf::Vector3f& baseCenter, float baseSize, float height
 
 
 void Engine::render() {
-    addObj({0.1,0.1,0.1}, 1, 0.1);
+    addObj({0.134,0.134,0.134}, 1, 1); // Добавляем пирамиду
     while (pWindow->isOpen()) {
         sf::Event event{};
         while (pWindow->pollEvent(event)) {
@@ -108,21 +108,16 @@ void Engine::render() {
 
         pWindow->clear(sf::Color::Black);
 
-        // for (auto& polygon : vsTriangles) {
-        //     for (int i = 0; i < 3; ++i) {
-        //         sf::Vector3f relativePos = polygon.posVec3[i] - sfVec3fCamera;
-        //         polygon.sfVerAry[i].position = projectTo2D(relativePos);
-        //     }
-        //     pWindow->draw(polygon.sfVerAry);
-        // }
-
-        // Пример в основном цикле отрисовки
+        // Рисуем все объекты
         for (auto& obj : vsObjects) {
+            rotatePyramid(obj, 0, 1, 0); // Вращаем пирамиду в реальном времени
             obj.draw(pWindow, sfVec3fCamera, m_fDistanceToProjection);
         }
+
         pWindow->display();
     }
 }
+
 
 Engine::~Engine() {
     if (pWindow) {
@@ -132,6 +127,53 @@ Engine::~Engine() {
 }
 
 sf::Vector2f Engine::projectTo2D(const sf::Vector3f& point) const {
-    return sf::Vector2f((point.x * m_fDistanceToProjection) / point.z + uiWidth / 2,
-                        (point.y * m_fDistanceToProjection) / point.z + uiHeight / 2);
+    if (point.z <= 0) return sf::Vector2f(uiWidth / 2, uiHeight / 2); // Предотвращение деления на ноль или отрицательного z
+
+    return sf::Vector2f(
+        (point.x * m_fDistanceToProjection) / point.z + uiWidth / 2,
+        (point.y * m_fDistanceToProjection) / point.z + uiHeight / 2
+    );
 }
+
+sf::Vector3f Engine::rotateX(const sf::Vector3f& point, float angle) {
+    float rad = angle * (M_PI / 180);
+    return sf::Vector3f(
+        point.x,
+        point.y * cos(rad) - point.z * sin(rad),
+        point.y * sin(rad) + point.z * cos(rad)
+    );
+}
+
+sf::Vector3f Engine::rotateY(const sf::Vector3f& point, float angle) {
+    float rad = angle * (M_PI / 180);
+    return sf::Vector3f(
+        point.x * cos(rad) + point.z * sin(rad),
+        point.y,
+        -point.x * sin(rad) + point.z * cos(rad)
+    );
+}
+
+sf::Vector3f Engine::rotateZ(const sf::Vector3f& point, float angle) {
+    float rad = angle * (M_PI / 180);
+    return sf::Vector3f(
+        point.x * cos(rad) - point.y * sin(rad),
+        point.x * sin(rad) + point.y * cos(rad),
+        point.z
+    );
+}
+
+void Engine::rotatePyramid(Obj& pyramid, float angleX, float angleY, float angleZ) {
+    for (auto& polygon : pyramid.polygons) {
+        for (int i = 0; i < 3; ++i) {
+            // Вращаем по всем осям
+            polygon.posVec3[i] = rotateX(polygon.posVec3[i], angleX);
+            polygon.posVec3[i] = rotateY(polygon.posVec3[i], angleY);
+            polygon.posVec3[i] = rotateZ(polygon.posVec3[i], angleZ);
+
+            // Проецируем 3D координаты в 2D
+            sf::Vector3f relativePos = polygon.posVec3[i] - sfVec3fCamera;
+            polygon.sfVerAry[i].position = projectTo2D(relativePos);
+        }
+    }
+}
+
