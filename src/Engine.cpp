@@ -14,7 +14,7 @@ Engine::Engine(const unsigned int uiWidth, const unsigned int uiHeight)
 }
 
 void Engine::addTriangle(const sf::Vector3f& point1, const sf::Vector3f& point2, const sf::Vector3f& point3) {
-    Poligon3 polygon;
+    Polygon3 polygon;
     sf::VertexArray triangle(sf::Triangles, 3);
 
     triangle[0].position = projectTo2D(point1);
@@ -32,8 +32,51 @@ void Engine::addTriangle(const sf::Vector3f& point1, const sf::Vector3f& point2,
 
     vsTriangles.push_back(polygon);
 }
+void Engine::addObj(const sf::Vector3f& baseCenter, float baseSize, float height) {
+    Obj newObj;
+    newObj.name = "Pyramid"; // Установим имя объекта
+
+    // Вычисляем вершины пирамиды
+    sf::Vector3f topVertex(0, 0, height); // Вершина (пик) пирамиды
+
+    // Вершины основания (квадрат)
+    sf::Vector3f bottomVertices[4] = {
+        sf::Vector3f(baseCenter.x - baseSize / 2, baseCenter.y - baseSize / 2, baseCenter.z),
+        sf::Vector3f(baseCenter.x + baseSize / 2, baseCenter.y - baseSize / 2, baseCenter.z),
+        sf::Vector3f(baseCenter.x + baseSize / 2, baseCenter.y + baseSize / 2, baseCenter.z),
+        sf::Vector3f(baseCenter.x - baseSize / 2, baseCenter.y + baseSize / 2, baseCenter.z)
+    };
+
+    // Создаём 4 треугольника для боковых граней
+    for (int i = 0; i < 4; ++i) {
+        Polygon3 polygon;
+        sf::VertexArray triangle(sf::Triangles, 3);
+
+        // Вершины треугольника
+        triangle[0].position = projectTo2D(bottomVertices[i]);
+        triangle[1].position = projectTo2D(bottomVertices[(i + 1) % 4]);
+        triangle[2].position = projectTo2D(topVertex);
+
+        // Задаем цвета
+        triangle[0].color = sf::Color::Red;   // Цвет первой вершины
+        triangle[1].color = sf::Color::Green; // Цвет второй вершины
+        triangle[2].color = sf::Color::Blue;  // Цвет третьей вершины
+
+        polygon.sfVerAry = triangle;
+        polygon.posVec3[0] = bottomVertices[i];
+        polygon.posVec3[1] = bottomVertices[(i + 1) % 4];
+        polygon.posVec3[2] = topVertex;
+
+        newObj.polygons.push_back(polygon); // Добавляем полигон в объект
+    }
+
+    // Добавляем объект в вектор объектов (например, vsObjects)
+    vsObjects.push_back(newObj);
+}
+
 
 void Engine::render() {
+    addObj({0.1,0.1,0.1}, 1, 0.1);
     while (pWindow->isOpen()) {
         sf::Event event{};
         while (pWindow->pollEvent(event)) {
@@ -65,14 +108,18 @@ void Engine::render() {
 
         pWindow->clear(sf::Color::Black);
 
-        for (auto& polygon : vsTriangles) {
-            for (int i = 0; i < 3; ++i) {
-                sf::Vector3f relativePos = polygon.posVec3[i] - sfVec3fCamera;
-                polygon.sfVerAry[i].position = projectTo2D(relativePos);
-            }
-            pWindow->draw(polygon.sfVerAry);
-        }
+        // for (auto& polygon : vsTriangles) {
+        //     for (int i = 0; i < 3; ++i) {
+        //         sf::Vector3f relativePos = polygon.posVec3[i] - sfVec3fCamera;
+        //         polygon.sfVerAry[i].position = projectTo2D(relativePos);
+        //     }
+        //     pWindow->draw(polygon.sfVerAry);
+        // }
 
+        // Пример в основном цикле отрисовки
+        for (auto& obj : vsObjects) {
+            obj.draw(pWindow, sfVec3fCamera, m_fDistanceToProjection);
+        }
         pWindow->display();
     }
 }
