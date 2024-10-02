@@ -51,13 +51,6 @@ build CMakeFiles/3DEngine.dir/src/Engine.cpp.obj: CXX_COMPILER__3DEngine_unscann
   OBJECT_DIR = CMakeFiles\3DEngine.dir
   OBJECT_FILE_DIR = CMakeFiles\3DEngine.dir\src
 
-build CMakeFiles/3DEngine.dir/src/ObjParser.cpp.obj: CXX_COMPILER__3DEngine_unscanned_ E$:/C_Projects_VS/cmake_project/3dEngine/src/ObjParser.cpp || cmake_object_order_depends_target_3DEngine
-  DEP_FILE = CMakeFiles\3DEngine.dir\src\ObjParser.cpp.obj.d
-  FLAGS = -fdiagnostics-color=always
-  INCLUDES = -isystem E:/C_Projects_VS/cmake_project/3dEngine/SFML/include
-  OBJECT_DIR = CMakeFiles\3DEngine.dir
-  OBJECT_FILE_DIR = CMakeFiles\3DEngine.dir\src
-
 build CMakeFiles/3DEngine.dir/src/main.cpp.obj: CXX_COMPILER__3DEngine_unscanned_ E$:/C_Projects_VS/cmake_project/3dEngine/src/main.cpp || cmake_object_order_depends_target_3DEngine
   DEP_FILE = CMakeFiles\3DEngine.dir\src\main.cpp.obj.d
   FLAGS = -fdiagnostics-color=always
@@ -73,7 +66,7 @@ build CMakeFiles/3DEngine.dir/src/main.cpp.obj: CXX_COMPILER__3DEngine_unscanned
 #############################################
 # Link the executable debug\3DEngine.exe
 
-build debug/3DEngine.exe: CXX_EXECUTABLE_LINKER__3DEngine_ CMakeFiles/3DEngine.dir/src/Engine.cpp.obj CMakeFiles/3DEngine.dir/src/ObjParser.cpp.obj CMakeFiles/3DEngine.dir/src/main.cpp.obj | SFML/lib/libsfml-graphics-d.a SFML/lib/libsfml-network-d.a SFML/lib/libsfml-audio-d.a SFML/lib/libsfml-window-d.a SFML/lib/libsfml-system-d.a
+build debug/3DEngine.exe: CXX_EXECUTABLE_LINKER__3DEngine_ CMakeFiles/3DEngine.dir/src/Engine.cpp.obj CMakeFiles/3DEngine.dir/src/main.cpp.obj | SFML/lib/libsfml-graphics-d.a SFML/lib/libsfml-network-d.a SFML/lib/libsfml-audio-d.a SFML/lib/libsfml-window-d.a SFML/lib/libsfml-system-d.a
   LINK_LIBRARIES = SFML/lib/libsfml-graphics-d.a  SFML/lib/libsfml-network-d.a  SFML/lib/libsfml-audio-d.a  SFML/lib/libsfml-window-d.a  SFML/lib/libsfml-system-d.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\3DEngine.dir
   POST_BUILD = cd .
